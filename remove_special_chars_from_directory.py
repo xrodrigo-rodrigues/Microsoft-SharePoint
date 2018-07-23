@@ -8,38 +8,15 @@ fname = 'debug_pastas.log'
 debug = False   # True para gerar log/ False para executar os renomeios
 
 # substituir espaco por:
-c_esp = ' '
+character_espaco = ""
 
 # substituir caractere desconhecido por:
-c_des = ""
-
-# tamanho maximo real do nome de cada pasta
-t_max_real = 128
-
-# tamanho maximo intermediario do nome de cada pasta
-t_max_int = 50
-
-# tamanho maximo do path
-# url     = 400
-# arquivo = 128
-# tamanho maximo = 400 - 128 = 272
-t_max_path = 272
-
-# sufixo para o nome das pastas
-sufixo = 0
-
-# numero sugerido de pastas que serao processadas Quando Debug for True, colocar valor 100 em ntotal
-ntotal = 502200
-natual = 0
-
-# numero de letras randomicas
-numero_letrinhas = 4
-
+character_desconhecido = " "
 
 with open(fname, 'w') as arquivo:
-    # provavelmente é o crawler das pastas
+
     for dirpath, dirnames, filenames in os.walk(rootdir, topdown=False):
-        # itera entre as pastas
+
         for dirname in dirnames:
             
             # nome da pasta
@@ -49,10 +26,10 @@ with open(fname, 'w') as arquivo:
             # subtituicoes conhecidas
             # ----------------------------------------------------------
             
-            # espaco
-            original_name = original_name.replace(" ", c_esp)
+            # nomes com espaco
+            original_name = original_name.replace("", character_espaco)
 
-            # cedilha
+            # nomes com cedilha
             original_name = original_name.replace("ç", "c")
             
             # n acentuado
@@ -73,6 +50,12 @@ with open(fname, 'w') as arquivo:
             
             for character in ["ú", "ù", "û", "ü"]:
                 original_name = original_name.replace(character, "u")
+                
+            for character in ["@"]:
+                original_name = original_name.replace(character, "a")
+            
+            for character in ["$"]:
+                original_name = original_name.replace(character, "s")
             
             for character in ["~", "\"", "#", "%", "&", "*", ":", "<", ">", "?", "/", "\\", "{", "|", "}", "."]:
                 original_name = original_name.replace(character, " ")
@@ -81,7 +64,7 @@ with open(fname, 'w') as arquivo:
             # substituicoes de caracteres desconhecidos
             # ----------------------------------------------------------
             
-            # caractes conhecidos
+            # caracteres conhecidos
             letras = "abcdefghijklmnopqrstuvwxyz"
             numeros = "0123456789"
             simbolos = "-_."
@@ -90,7 +73,7 @@ with open(fname, 'w') as arquivo:
 
             for character in original_name:
                 if character not in conhecidos:
-                    character = c_des
+                    character = character_desconhecido
                         
                 new_name = f'{new_name}{character}'
 
@@ -105,6 +88,7 @@ with open(fname, 'w') as arquivo:
                     letrinhas = ''.join(random.choices(string.ascii_lowercase + string.digits, k=numero_letrinhas)) 
                     new_path = f'{new_path}_{letrinhas}'
                 
+                #cria arquivo debug com informacoes do processo
                 if debug:
                     arquivo.write(f'{original_path}\n')
                     arquivo.write(f'{new_path}\n')
